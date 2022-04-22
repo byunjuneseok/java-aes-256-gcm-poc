@@ -10,7 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class App {
     public static final int AES_KEY_SIZE = 256;
-    public static final int GCM_IV_LENGTH = 12;
+    public static final int GCM_IV_LENGTH = 16;
     public static final int GCM_TAG_LENGTH = 16;
 
     public static byte[] getKey() {
