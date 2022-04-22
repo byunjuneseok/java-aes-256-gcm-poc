@@ -1,4 +1,5 @@
 package aes256_poc;
+import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.Base64.Decoder;
 
@@ -23,6 +24,28 @@ public class App {
         return decodedKey;
     }
 
+    public static byte[] generateRandomIV() {
+        byte[] IV = new byte[GCM_IV_LENGTH];
+        SecureRandom random = new SecureRandom();
+        random.nextBytes(IV);
+
+        return IV;
+    }
+
+    public static EncryptedField encrypt(String text) throws Exception {
+        Cipher cipher = Cipher.getInstance("AES/GCM/Nopadding");
+
+        SecretKeySpec keySpec = new SecretKeySpec(getKey(), "AES");
+
+        byte[] nonce = generateRandomIV();
+        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(GCM_TAG_LENGTH * 8, nonce);
+
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
+        byte[] cipherText = cipher.doFinal(text.getBytes());
+
+        return new EncryptedField(nonce, cipherText);
+    }
+
 
     public static String decrypt(byte[] cipherText, byte[] nonce) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
@@ -39,9 +62,19 @@ public class App {
 
     public static void main(String[] args) throws Exception {
         String queriedField = "v=1,a=aes256gcm,3uiCUhKGdcIbcZcXU5wCzw==,t6YzJ8BWI7stb+U=,R1kgOsyI/vJRwbX2cN9/bg==";
+
         EncryptedField field = new EncryptedField(queriedField);
+        System.out.println(field.getField());
 
         String text = decrypt(field.getCipherTextAndTag(), field.getNonce());
         System.out.println(text);
+
+        System.out.println("********");
+        EncryptedField newField = encrypt("01033336666");
+        System.out.println(newField.getField());
+        System.out.println(
+            decrypt(newField.getCipherTextAndTag(), newField.getNonce())
+        );
+
     }
 }
