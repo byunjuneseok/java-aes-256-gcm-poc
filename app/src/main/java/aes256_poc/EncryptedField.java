@@ -34,4 +34,15 @@ public class EncryptedField {
     public byte[] getCipherTextAndTag() {
         return Bytes.concat(this.cipherText, this.tag);
     }
+
+    public String getField() {
+        Encoder encoder = Base64.getEncoder();
+
+        return String.format(
+            "v=1,a=aes256gcm,%s,%s,%s",
+            encoder.encodeToString(this.nonce),
+            encoder.encodeToString(this.cipherText),
+            encoder.encodeToString(this.tag)
+        );
+    }
 }
