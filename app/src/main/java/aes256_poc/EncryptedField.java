@@ -27,16 +27,8 @@ public class EncryptedField {
         this.tag = decoder.decode(parsedFieldString.get(4));
     }
 
-    public byte[] getCipherText() {
-        return cipherText;
-    }
-
     public byte[] getNonce() {
         return nonce;
-    }
-
-    public byte[] getTag() {
-        return tag;
     }
 
     public byte[] getCipherTextAndTag() {
