@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Base64.Decoder;
+import java.util.Base64.Encoder;
 
 import com.google.common.primitives.Bytes;
 
@@ -25,6 +26,16 @@ public class EncryptedField {
         this.nonce = decoder.decode(parsedFieldString.get(2));
         this.cipherText = decoder.decode(parsedFieldString.get(3));
         this.tag = decoder.decode(parsedFieldString.get(4));
+    }
+
+    public EncryptedField(byte[] nonce, byte[] cipherText) {
+        this.version = "v=1";
+        this.algorithm = "a=aes256gcm";
+        this.nonce = nonce;
+
+        int cipherTextLength = cipherText.length - 16;
+        this.cipherText = Arrays.copyOfRange(cipherText, 0, cipherTextLength);
+        this.tag = Arrays.copyOfRange(cipherText, cipherTextLength, cipherText.length);
     }
 
     public byte[] getNonce() {
